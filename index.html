@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Pre-Operación Interactivo</title>
+    <!-- Incluye Tailwind CSS desde CDN para estilos minimalistas y responsivos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para la fuente y el fondo */
+        body {
+            font-family: 'Inter', sans-serif; /* Fuente profesional */
+            background-color: #f3f4f6; /* Un gris muy claro para el fondo */
+        }
+        /* Asegura que los íconos se vean bien */
+        .icon {
+            font-size: 2.5rem; /* Tamaño grande para los íconos */
+            line-height: 1; /* Asegura que el ícono esté alineado verticalmente */
+            margin-right: 1rem; /* Espacio a la derecha del ícono */
+            text-align: center; /* Centra el ícono */
+            width: 3rem; /* Ancho fijo para el ícono para alineación */
+            flex-shrink: 0; /* Evita que el ícono se encoja */
+        }
+
+        /* Estilos para los estados de los ítems */
+        .checklist-item {
+            cursor: pointer; /* Indica que es clickeable */
+            transition: all 0.2s ease-in-out; /* Transición suave para los cambios de estado */
+            border: 2px solid transparent; /* Borde transparente por defecto */
+        }
+
+        .checklist-item:hover {
+            transform: translateY(-2px); /* Pequeño levantamiento al pasar el ratón */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Sombra suave al pasar el ratón */
+        }
+
+        /* Estado 'correcto' (verde) */
+        .checklist-item.correct {
+            background-color: #d1fae5; /* Verde claro */
+            border-color: #34d399; /* Borde verde más intenso */
+            color: #065f46; /* Texto verde oscuro */
+        }
+
+        /* Estado 'incorrecto' (rojo) */
+        .checklist-item.incorrect {
+            background-color: #fee2e2; /* Rojo claro */
+            border-color: #ef4444; /* Borde rojo más intenso */
+            color: #991b1b; /* Texto rojo oscuro */
+        }
+
+        /* Estado 'neutral' (gris claro) - por si se vuelve al estado inicial */
+        .checklist-item.neutral {
+            background-color: #f9fafb; /* Gris muy claro */
+            border-color: #e5e7eb; /* Borde gris */
+            color: #1f2937; /* Texto gris oscuro */
+        }
+
+        /* Estilo para el mensaje de recomendación */
+        #recommendation {
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem; /* rounded-xl */
+            font-weight: 600; /* font-semibold */
+            text-align: center;
+            margin-top: 2.5rem; /* mt-10 */
+            transition: all 0.3s ease-in-out;
+        }
+
+        #recommendation.enter {
+            background-color: #d1fae5; /* Verde claro */
+            color: #065f46; /* Texto verde oscuro */
+            border: 2px solid #34d399;
+        }
+
+        #recommendation.do-not-enter {
+            background-color: #fee2e2; /* Rojo claro */
+            color: #991b1b; /* Texto rojo oscuro */
+            border: 2px solid #ef4444;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white text-gray-900 rounded-2xl shadow-2xl p-8 sm:p-10 md:p-12 w-full max-w-2xl border border-gray-200">
+        <!-- Título principal del checklist -->
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-center mb-10 text-gray-800">
+            Checklist Pre-Operación
+        </h1>
+
+        <!-- Contenedor para los ítems del checklist -->
+        <div id="checklist-items" class="space-y-6 mb-8">
+            <!-- Cada ítem ahora tiene un estado inicial 'neutral' -->
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="sleep">
+                <span class="icon" role="img" aria-label="Sleeping face">😴</span>
+                <p class="text-xl sm:text-2xl font-medium">Dormí bien al menos 6 horas</p>
+            </div>
+
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="emotion">
+                <span class="icon" role="img" aria-label="Person in lotus position">🧘‍♂️</span>
+                <p class="text-xl sm:text-2xl font-medium">Estado emocional estable</p>
+            </div>
+
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="plan">
+                <span class="icon" role="img" aria-label="Bar chart">📊</span>
+                <p class="text-xl sm:text-2xl font-medium">Revisé mi plan de trading</p>
+            </div>
+
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="analysis">
+                <span class="icon" role="img" aria-label="Chart decreasing">📉</span>
+                <p class="text-xl sm:text-2xl font-medium">Analicé el mercado (tendencia y niveles)</p>
+            </div>
+
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="risk-reward">
+                <span class="icon" role="img" aria-label="Abacus">🧮</span>
+                <p class="text-xl sm:text-2xl font-medium">Calculo riesgo/beneficio</p>
+            </div>
+
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="stop-loss">
+                <span class="icon" role="img" aria-label="Stop sign">🛑</span>
+                <p class="text-xl sm:text-2xl font-medium">Stop-loss definido</p>
+            </div>
+
+            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="entry">
+                <span class="icon" role="img" aria-label="Check mark button">✅</span>
+                <p class="text-xl sm:text-2xl font-medium">Solo opero si tengo entrada clara</p>
+            </div>
+        </div>
+
+        <!-- Área de puntaje y recomendación -->
+        <div class="text-center mt-8">
+            <p class="text-2xl sm:text-3xl font-bold text-gray-700 mb-4">Puntaje: <span id="score" class="text-indigo-600">0/7</span></p>
+            <div id="recommendation" class="text-lg sm:text-xl">
+                <!-- El mensaje de recomendación aparecerá aquí -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checklistItems = document.querySelectorAll('.checklist-item');
+            const scoreDisplay = document.getElementById('score');
+            const recommendationDisplay = document.getElementById('recommendation');
+            const totalItems = checklistItems.length;
+
+            /**
+             * Actualiza el puntaje y la recomendación de operar.
+             */
+            function updateStatus() {
+                let correctCount = 0;
+                let incorrectCount = 0;
+
+                // Itera sobre cada ítem del checklist para contar los estados
+                checklistItems.forEach(item => {
+                    const state = item.dataset.state;
+                    if (state === 'correct') {
+                        correctCount++;
+                    } else if (state === 'incorrect') {
+                        incorrectCount++;
+                    }
+                });
+
+                // Actualiza el texto del puntaje
+                scoreDisplay.textContent = `${correctCount}/${totalItems}`;
+
+                // Lógica de recomendación basada en el puntaje
+                let recommendationText = '';
+                let recommendationClass = '';
+
+                // Se requiere un mínimo de 6 puntos correctos para una recomendación positiva
+                if (correctCount >= 6 && incorrectCount === 0) { // Mayoría de puntos correctos y ninguno incorrecto
+                    recommendationText = "✅ ¡Listo para operar! Tus condiciones son óptimas.";
+                    recommendationClass = "enter";
+                } else if (correctCount >= 4 && incorrectCount <= 1) { // Balance aceptable
+                    recommendationText = "🤔 Precaución: Revisa los puntos en rojo antes de operar.";
+                    recommendationClass = "do-not-enter"; // Todavía considerado "no entrar" por precaución
+                }
+                 else { // Menos de 4 puntos correctos o más de 1 incorrecto
+                    recommendationText = "🛑 No operar. Es crucial revisar los puntos pendientes para evitar riesgos.";
+                    recommendationClass = "do-not-enter";
+                }
+
+                // Actualiza el contenido y las clases del div de recomendación
+                recommendationDisplay.textContent = recommendationText;
+                recommendationDisplay.className = ''; // Limpia clases anteriores
+                recommendationDisplay.classList.add(recommendationClass);
+            }
+
+            // Añade el evento click a cada ítem del checklist
+            checklistItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const currentState = item.dataset.state;
+                    let newState = 'neutral';
+
+                    // Lógica para alternar entre estados: neutral -> correct -> incorrect -> neutral
+                    if (currentState === 'neutral') {
+                        newState = 'correct';
+                    } else if (currentState === 'correct') {
+                        newState = 'incorrect';
+                    } else if (currentState === 'incorrect') {
+                        newState = 'neutral';
+                    }
+
+                    // Remueve las clases de estado anteriores
+                    item.classList.remove('neutral', 'correct', 'incorrect');
+                    // Añade la nueva clase de estado
+                    item.classList.add(newState);
+                    // Actualiza el atributo data-state
+                    item.dataset.state = newState;
+
+                    // Actualiza el puntaje y la recomendación
+                    updateStatus();
+                });
+            });
+
+            // Llama a updateStatus inicialmente para mostrar el puntaje y recomendación al cargar
+            updateStatus();
+        });
+    </script>
+</body>
+</html>
