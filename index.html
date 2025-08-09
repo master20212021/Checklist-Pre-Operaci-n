@@ -6,12 +6,47 @@
     <title>Checklist Pre-Operación Interactivo</title>
     <!-- Incluye Tailwind CSS desde CDN para estilos minimalistas y responsivos -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome para íconos de redes sociales y de contenido -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Estilos personalizados para la fuente y el fondo */
+        /* Estilos base para el cuerpo, consistentes con las otras páginas */
         body {
-            font-family: 'Inter', sans-serif; /* Fuente profesional */
-            background-color: #f3f4f6; /* Un gris muy claro para el fondo */
+            font-family: 'Inter', sans-serif;
+            background-color: #030712; /* Fondo casi negro consistente */
+            color: #E5E7EB; /* Texto gris claro consistente */
+            overflow-x: hidden; /* Evita scroll horizontal */
+            min-height: 100vh; /* Asegura que el body ocupe al menos la altura completa del viewport */
+            display: flex; /* Convierte el body en un flex container */
+            flex-direction: column; /* Apila los hijos verticalmente */
+            align-items: center; /* Centra los hijos horizontalmente si no ocupan todo el ancho */
+            padding: 0; /* Elimina padding directo del body para aplicarlo en el contenedor de contenido */
         }
+        /* Grano/Ruido sutil para el fondo, copiado de la landing page */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,iVB0SUhEUgAAADAAAAAwCAMAAAD9gGz5AAAAAXNSR0IB2cksfwAAAAlwSFlzAAAWJQAAFiUAUFXgxwAAABhQTFRFAAAAsND/sND/sND/sND/sND/sND/sND/sND/jQ0vAAAACnRSTlMAAAAA+wD49z8nBA+MvK+1nQAAABpJREFUeJxjYmBgZGSAjYAAhjFGEGAABgBcA1M77D2NwgAAAABJRU5ErkJggg=='); /* Pequeña imagen de grano */
+            background-repeat: repeat;
+            opacity: 0.02; /* Muy baja opacidad */
+            pointer-events: none; /* Asegura que no interfiera con interacciones */
+            z-index: -1;
+        }
+
+        /* Define una variable CSS para la fuente del encabezado */
+        :root {
+            --heading-font: 'Montserrat', sans-serif; /* Montserrat aplicada por defecto ahora */
+        }
+
+        /* Aplica la fuente Montserrat a todos los h1 y h2 */
+        h1, h2 {
+            font-family: var(--heading-font);
+        }
+
         /* Asegura que los íconos se vean bien */
         .icon {
             font-size: 2.5rem; /* Tamaño grande para los íconos */
@@ -20,6 +55,7 @@
             text-align: center; /* Centra el ícono */
             width: 3rem; /* Ancho fijo para el ícono para alineación */
             flex-shrink: 0; /* Evita que el ícono se encoja */
+            color: #E5E7EB; /* Color de ícono por defecto en el tema oscuro */
         }
 
         /* Estilos para los estados de los ítems */
@@ -27,32 +63,33 @@
             cursor: pointer; /* Indica que es clickeable */
             transition: all 0.2s ease-in-out; /* Transición suave para los cambios de estado */
             border: 2px solid transparent; /* Borde transparente por defecto */
+            color: #E5E7EB; /* Texto por defecto en tema oscuro */
         }
 
         .checklist-item:hover {
             transform: translateY(-2px); /* Pequeño levantamiento al pasar el ratón */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Sombra suave al pasar el ratón */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave al pasar el ratón */
         }
 
-        /* Estado 'correcto' (verde) */
+        /* Estado 'correcto' (verde) - adaptado a fondo oscuro */
         .checklist-item.correct {
-            background-color: #d1fae5; /* Verde claro */
+            background-color: rgba(52, 211, 153, 0.15); /* Verde con opacidad */
             border-color: #34d399; /* Borde verde más intenso */
-            color: #065f46; /* Texto verde oscuro */
+            color: #D1FAE5; /* Texto verde claro */
         }
 
-        /* Estado 'incorrecto' (rojo) */
+        /* Estado 'incorrecto' (rojo) - adaptado a fondo oscuro */
         .checklist-item.incorrect {
-            background-color: #fee2e2; /* Rojo claro */
+            background-color: rgba(239, 68, 68, 0.15); /* Rojo con opacidad */
             border-color: #ef4444; /* Borde rojo más intenso */
-            color: #991b1b; /* Texto rojo oscuro */
+            color: #FEE2E2; /* Texto rojo claro */
         }
 
-        /* Estado 'neutral' (gris claro) - por si se vuelve al estado inicial */
+        /* Estado 'neutral' (gris oscuro) */
         .checklist-item.neutral {
-            background-color: #f9fafb; /* Gris muy claro */
-            border-color: #e5e7eb; /* Borde gris */
-            color: #1f2937; /* Texto gris oscuro */
+            background-color: #1a202c; /* Gris oscuro para el fondo */
+            border-color: #374151; /* Borde gris más oscuro */
+            color: #E5E7EB; /* Texto gris claro */
         }
 
         /* Estilo para el mensaje de recomendación */
@@ -63,75 +100,166 @@
             text-align: center;
             margin-top: 2.5rem; /* mt-10 */
             transition: all 0.3s ease-in-out;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         #recommendation.enter {
-            background-color: #d1fae5; /* Verde claro */
-            color: #065f46; /* Texto verde oscuro */
+            background-color: rgba(52, 211, 153, 0.2); /* Verde con opacidad */
+            color: #34d399; /* Texto verde */
             border: 2px solid #34d399;
         }
 
         #recommendation.do-not-enter {
-            background-color: #fee2e2; /* Rojo claro */
-            color: #991b1b; /* Texto rojo oscuro */
+            background-color: rgba(239, 68, 68, 0.2); /* Rojo con opacidad */
+            color: #ef4444; /* Texto rojo */
             border: 2px solid #ef4444;
+        }
+
+        /* Estilos de la landing page copiados para consistencia */
+        .section-glow {
+            box-shadow:
+                0 0 40px rgba(34, 211, 238, 0.1), /* Sombra principal más fuerte */
+                0 0 80px rgba(34, 211, 238, 0.05), /* Sombra de halo exterior */
+                0 0 120px rgba(6, 182, 212, 0.03); /* Sombra más difusa */
+            border-radius: 1.5rem; /* Bordes más redondeados para un look premium */
+            overflow: hidden; /* Asegura que las sombras internas se recorten */
+            transition: box-shadow 0.5s ease-in-out; /* Transición suave para el brillo */
+        }
+        .section-glow:hover {
+            box-shadow:
+                0 0 60px rgba(34, 211, 238, 0.15),
+                0 0 100px rgba(34, 211, 238, 0.08),
+                0 0 150px rgba(6, 182, 212, 0.05);
+        }
+        .social-icon {
+            font-size: 1.8rem; /* Tamaño del ícono por defecto en footer */
+            color: #E5E7EB; /* Color por defecto */
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+        .social-icon:hover {
+            transform: translateY(-3px) scale(1.1); /* Efecto de elevación y escala sutil */
+        }
+        .social-icon.header-social {
+            font-size: 2.8rem; /* Tamaño más grande para íconos en el header */
+        }
+        .social-icon.fa-telegram:hover {
+            color: #0088CC; /* Color de Telegram */
+        }
+        .social-icon.fa-instagram:hover {
+            color: #E4405F; /* Color de Instagram */
+        }
+        .social-icon.fa-facebook:hover {
+            color: #1877F2; /* Color de Facebook */
+        }
+        .social-icon.fa-tiktok:hover {
+            color: #69C9D0; /* Color de TikTok (principal) */
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white text-gray-900 rounded-2xl shadow-2xl p-8 sm:p-10 md:p-12 w-full max-w-2xl border border-gray-200">
-        <!-- Título principal del checklist -->
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-center mb-10 text-gray-800">
-            Checklist Pre-Operación
-        </h1>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <!-- Contenedor principal para el header y main, para controlar el centrado y padding -->
+    <div class="flex-grow w-full max-w-4xl mx-auto p-4 sm:p-8">
+        <header class="text-center py-8 bg-gray-800 rounded-2xl section-glow mb-10">
+            <!-- Logo al principio de la página -->
+            <img src="https://i.postimg.cc/nVW2PvKM/logo-png-oficial-fondo-trasparente.png" alt="Logo para_traders_" class="mx-auto h-24 w-auto mb-6 opacity-90">
 
-        <!-- Contenedor para los ítems del checklist -->
-        <div id="checklist-items" class="space-y-6 mb-8">
-            <!-- Cada ítem ahora tiene un estado inicial 'neutral' -->
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="sleep">
-                <span class="icon" role="img" aria-label="Sleeping face">😴</span>
-                <p class="text-xl sm:text-2xl font-medium">Dormí bien al menos 6 horas</p>
-            </div>
+            <p class="text-lg font-semibold text-emerald-400 uppercase">HERRAMIENTA CLAVE</p>
+            <h1 class="text-4xl md:text-5xl font-black mt-2">Checklist Pre-Operación</h1>
 
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="emotion">
-                <span class="icon" role="img" aria-label="Person in lotus position">🧘‍♂️</span>
-                <p class="text-xl sm:text-2xl font-medium">Estado emocional estable</p>
+            <!-- Redes Sociales en Header -->
+            <div class="flex justify-center space-x-8 mt-8 mb-4">
+                <a href="https://t.me/erostrading" target="_blank" rel="noopener noreferrer" aria-label="Telegram de para_traders_">
+                    <i class="fab fa-telegram header-social social-icon text-gray-300 hover:text-cyan-400"></i>
+                </a>
+                <a href="https://www.instagram.com/para_traders__?igsh=MXd0eGdtZ3ZnaWJxag==" target="_blank" rel="noopener noreferrer" aria-label="Instagram de para_traders_">
+                    <i class="fab fa-instagram header-social social-icon text-gray-300 hover:text-pink-500"></i>
+                </a>
+                <a href="https://www.facebook.com/paraltraders" target="_blank" rel="noopener noreferrer" aria-label="Facebook de para_traders_">
+                    <i class="fab fa-facebook header-social social-icon text-gray-300 hover:text-blue-600"></i>
+                </a>
+                <a href="https://www.tiktok.com/@para_traders?_t=ZT-8yicg47qPio&_r=1" target="_blank" rel="noopener noreferrer" aria-label="TikTok de para_traders_">
+                    <i class="fab fa-tiktok header-social social-icon text-gray-300 hover:text-teal-400"></i>
+                </a>
             </div>
+        </header>
 
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="plan">
-                <span class="icon" role="img" aria-label="Bar chart">📊</span>
-                <p class="text-xl sm:text-2xl font-medium">Revisé mi plan de trading</p>
-            </div>
+        <main class="space-y-10">
+            <div class="bg-gray-800 rounded-2xl section-glow shadow-2xl p-8 sm:p-10 md:p-12 w-full border border-gray-700">
+                <!-- Contenedor para los ítems del checklist -->
+                <div id="checklist-items" class="space-y-6 mb-8">
+                    <!-- Cada ítem ahora tiene un estado inicial 'neutral' -->
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="sleep">
+                        <span class="icon" role="img" aria-label="Sleeping face">😴</span>
+                        <p class="text-xl sm:text-2xl font-medium">Dormí bien al menos 6 horas</p>
+                    </div>
 
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="analysis">
-                <span class="icon" role="img" aria-label="Chart decreasing">📉</span>
-                <p class="text-xl sm:text-2xl font-medium">Analicé el mercado (tendencia y niveles)</p>
-            </div>
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="emotion">
+                        <span class="icon" role="img" aria-label="Person in lotus position">🧘‍♂️</span>
+                        <p class="text-xl sm:text-2xl font-medium">Estado emocional estable</p>
+                    </div>
 
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="risk-reward">
-                <span class="icon" role="img" aria-label="Abacus">🧮</span>
-                <p class="text-xl sm:text-2xl font-medium">Calculo riesgo/beneficio</p>
-            </div>
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="plan">
+                        <span class="icon" role="img" aria-label="Bar chart">📊</span>
+                        <p class="text-xl sm:text-2xl font-medium">Revisé mi plan de trading</p>
+                    </div>
 
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="stop-loss">
-                <span class="icon" role="img" aria-label="Stop sign">🛑</span>
-                <p class="text-xl sm:text-2xl font-medium">Stop-loss definido</p>
-            </div>
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="analysis">
+                        <span class="icon" role="img" aria-label="Chart decreasing">📉</span>
+                        <p class="text-xl sm:text-2xl font-medium">Analicé el mercado (tendencia y niveles)</p>
+                    </div>
 
-            <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="entry">
-                <span class="icon" role="img" aria-label="Check mark button">✅</span>
-                <p class="text-xl sm:text-2xl font-medium">Solo opero si tengo entrada clara</p>
-            </div>
-        </div>
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="risk-reward">
+                        <span class="icon" role="img" aria-label="Abacus">🧮</span>
+                        <p class="text-xl sm:text-2xl font-medium">Calculo riesgo/beneficio</p>
+                    </div>
 
-        <!-- Área de puntaje y recomendación -->
-        <div class="text-center mt-8">
-            <p class="text-2xl sm:text-3xl font-bold text-gray-700 mb-4">Puntaje: <span id="score" class="text-indigo-600">0/7</span></p>
-            <div id="recommendation" class="text-lg sm:text-xl">
-                <!-- El mensaje de recomendación aparecerá aquí -->
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="stop-loss">
+                        <span class="icon" role="img" aria-label="Stop sign">🛑</span>
+                        <p class="text-xl sm:text-2xl font-medium">Stop-loss definido</p>
+                    </div>
+
+                    <div class="checklist-item flex items-center p-4 rounded-lg neutral" data-state="neutral" data-id="entry">
+                        <span class="icon" role="img" aria-label="Check mark button">✅</span>
+                        <p class="text-xl sm:text-2xl font-medium">Solo opero si tengo entrada clara</p>
+                    </div>
+                </div>
+
+                <!-- Área de puntaje y recomendación -->
+                <div class="text-center mt-8">
+                    <p class="text-2xl sm:text-3xl font-bold text-gray-200 mb-4">Puntaje: <span id="score" class="text-emerald-400">0/7</span></p>
+                    <div id="recommendation" class="text-lg sm:text-xl">
+                        <!-- El mensaje de recomendación aparecerá aquí -->
+                    </div>
+                </div>
             </div>
-        </div>
+        </main>
     </div>
+
+    <!-- Pie de página con logo, redes sociales y disclaimer -->
+    <footer class="text-center py-12 px-4 bg-gray-900 border-t border-gray-700 w-full max-w-4xl mx-auto">
+        <!-- Logo en el pie de página -->
+        <img src="https://i.postimg.cc/nVW2PvKM/logo-png-oficial-fondo-trasparente.png" alt="Logo de para_traders_" class="mx-auto h-20 w-auto mb-6 opacity-80" loading="lazy">
+        
+        <!-- Redes sociales -->
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="https://t.me/erostrading" target="_blank" rel="noopener noreferrer" aria-label="Telegram de para_traders_">
+                <i class="fab fa-telegram social-icon"></i>
+            </a>
+            <a href="https://www.instagram.com/para_traders__?igsh=MXd0eGdtZ3ZnaWJxag==" target="_blank" rel="noopener noreferrer" aria-label="Instagram de para_traders_">
+                <i class="fab fa-instagram social-icon"></i>
+            </a>
+            <a href="https://www.facebook.com/paraltraders" target="_blank" rel="noopener noreferrer" aria-label="Facebook de para_traders_">
+                <i class="fab fa-facebook social-icon"></i>
+            </a>
+            <a href="https://www.tiktok.com/@para_traders?_t=ZT-8yicg47qPio&_r=1" target="_blank" rel="noopener noreferrer" aria-label="TikTok de para_traders_">
+                <i class="fab fa-tiktok social-icon"></i>
+            </a>
+        </div>
+
+        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+            Aviso Legal: "para_traders_" ofrece contenido educativo y de desarrollo personal en el ámbito del psicotrading. Este curso no constituye asesoramiento financiero, de inversión ni recomendación de productos financieros específicos. Operar en los mercados financieros implica un riesgo significativo de pérdida de capital y no es adecuado para todos los inversores. Los resultados pasados no garantizan resultados futuros. Las decisiones de inversión son responsabilidad exclusiva del usuario.
+        </p>
+    </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -172,7 +300,7 @@
                     recommendationText = "🤔 Precaución: Revisa los puntos en rojo antes de operar.";
                     recommendationClass = "do-not-enter"; // Todavía considerado "no entrar" por precaución
                 }
-                 else { // Menos de 4 puntos correctos o más de 1 incorrecto
+                else { // Menos de 4 puntos correctos o más de 1 incorrecto
                     recommendationText = "🛑 No operar. Es crucial revisar los puntos pendientes para evitar riesgos.";
                     recommendationClass = "do-not-enter";
                 }
